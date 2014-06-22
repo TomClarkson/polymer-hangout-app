@@ -1,0 +1,18 @@
+{
+  "name": "hangout-app",
+  "version": "0.0.1",
+  "authors": [
+    "Gerwin Sturm <scarygami@gmail.com>"
+  ],
+  "description": "Polymer web components for easier Hangout app development",
+  "keywords": "polymer, web-components, hangout",
+  "main": "hangout-app.html",
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/Scarygami/hangout-app/",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#master"
+  }
+}
