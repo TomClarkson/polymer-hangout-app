@@ -1,13 +1,44 @@
 <link rel="import" href="../polymer/polymer.html">
 
+<!--
+Makes Hangout App development easier by loading all the necessary script and
+waiting for the Hangouts API to be ready before calling a `readyCallback`
+function that can be overwritten. To use it create your own custom element
+extending the `hangout-app` element
+
+##### Example
+
+    <polymer-element name="demo-hangout-app" extends="hangout-app">
+        ...
+    </polymer>
+
+@element hangout-app
+@blurb Element making Hangout App development easier.
+@status alpha
+@homepage https://scarygami.github.io/hangout-app
+-->
 <polymer-element name="hangout-app">
   <script>
     (function (global) {
       Polymer('hangout-app', {
+        /**
+         * `loaded` is set to true once everything is ready.
+         *
+         * @property loaded
+         * @type bool
+         */
         loaded: false,
+        
+        /**
+         * `readyCallback` is called once everything is ready.
+         * Should be overwritten in your custom hangout-app element.
+         *
+         * @method readyCallback
+         */
         readyCallback: function () {
-          global.console.log("hangout-app-wrapper ready");
+          global.console.log("hangout-app ready");
         },
+
         attached: function () {
           var script = global.document.createElement('script');
           script.src = 'https://hangoutsapi.talkgadget.google.com/talkgadget/apps/gadgets/js/rpc.js';
@@ -18,11 +49,11 @@
             var interval = global.setInterval(function () {
               // Make sure all scripts are loaded
               if (global.gapi && global.gapi.hangout && global.gadgets && global.gadgets.rpc) {
-                global.console.log("Library loaded");
+                global.console.log("Hangouts Library loaded");
                 global.clearInterval(interval);
                 global.gapi.hangout.onApiReady.add(function (event) {
                   if (event.isApiReady) {
-                    global.console.log("API Ready");
+                    global.console.log("Hangouts API Ready");
                     this.loaded = true;
                     this.readyCallback();
                   }
@@ -37,6 +68,19 @@
   </script>
 </polymer-element>
 
+<!--
+`hangout-shared-state` allows access to one key/value pair of the shared state
+in a hangout app.
+
+##### Example
+
+    <hangout-shared-state name="count" value="{{count}}"></hangout-shared-state>
+
+@element hangout-shared-state
+@blurb Element for access to the shared state of a Hangout app.
+@status alpha
+@homepage https://scarygami.github.io/hangout-app
+-->
 <polymer-element name="hangout-shared-state" attributes="name value">
   <script>
     (function (global) {
@@ -45,8 +89,22 @@
         currentValue = undefined;
 
       Polymer('hangout-shared-state', {
-        value: undefined,
+        /**
+         * Name of the key to access
+         * @attribute name
+         * @type string
+         * @required
+         */
         name: "",
+
+        /**
+         * Value of the data in the shared state, can be used for two-way binding
+         * @attribute value
+         * @type any
+         * @required
+         */
+        value: undefined,
+
         valueChanged: function () {
           if (!loaded) {
             return;
@@ -60,6 +118,7 @@
             }
           }
         },
+
         attached: function () {
           var tmp;
           if (!global.gapi || !global.gapi.hangout) {
@@ -71,6 +130,7 @@
           tmp = global.gapi.hangout.data.getValue(this.name);
           if (tmp === null || tmp === undefined) {
             currentValue = undefined;
+            loaded = true;
             this.valueChanged();
           } else {
             try {
