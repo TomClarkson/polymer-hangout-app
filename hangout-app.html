@@ -12,6 +12,22 @@ extending the `hangout-app` element
         ...
     </polymer>
 
+You will need several files to run the Hangout App.
+
++  Your custom hangout app element, extending `hangout-app`
+   [(sample)](https://github.com/Scarygami/hangout-app/blob/master/demo-hangout-app.html)
+
++  A website including your custom element
+   [(sample)](https://github.com/Scarygami/hangout-app/blob/master/demo_hangout.html)
+
++  A gadget-xml file, that loads your website in an iFrame and links it to the Hangout.
+   You can create one via [hangoutiframer](https://hangoutiframer.appspot.com/static/help.html)
+   or make a copy of [demo_hangout.xml](https://github.com/Scarygami/hangout-app/blob/master/demo_hangout.xml)
+   and adjust the URL in line 68 accordingly
+
+You then have to follow the [official instructions](https://developers.google.com/+/hangouts/running)
+to enable your application.
+
 @element hangout-app
 @blurb Element making Hangout App development easier.
 @status alpha
@@ -71,6 +87,13 @@ extending the `hangout-app` element
 <!--
 `hangout-shared-state` allows access to one key/value pair of the shared state
 in a hangout app.
+
+You can pass in anything as `value` that can be transformed into a string via
+`JSON.stringify` because, the Hangouts API only allows string-string pairs
+for the shared state. The element will try to encode/decode the value accordingly.
+
+Note that if value is an object the shared state will only be updated when value
+is a different instance. Changes on object properties won't trigger the update.
 
 ##### Example
 
